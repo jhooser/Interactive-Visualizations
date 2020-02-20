@@ -1,29 +1,51 @@
-function buildCharts(sample) {
-    // Make an API call to gather all data and then reduce to matching the sample selected
-    //TODO: 
-    d3.json("samples.json").then((data) => {
-    var trace1 = {
-  x:data.sample_values
-  y: [22.7, 17.1, 9.9, 8.7, 7.2, 6.1, 6.0, 4.6],
-  type: "bar"
+
+
+function buildCharts(sample) { 
+  d3.json("samples.json").then((data) => {
+    var sampleData = data.samples;
+    sampleData.forEach(data =>{
+      if (data.id === sample){
+      var currentSample = data.id
+      var trace1 = {
+        x:data.sample_value,
+        y:data.otu_ids,
+        type: "bar"
+        };
+    
+        var data = [trace1];
+    
+        var layout = {
+        title: currentSample,
+        xaxis: { title: "Bacteria"},
+        yaxis: { title: "Number of Cultures"}
+        };
+    
+        Plotly.newPlot("bar", data, layout);
+      }
+    })
+  });
 };
 
-var data = [trace1];
-
-var layout = {
-  title: "'Bar' Chart",
-  xaxis: { title: "Drinks"},
-  yaxis: { title: "% of Drinks Ordered"}
-};
-
-Plotly.newPlot("plot", data, layout);
-
-});
 
 function buildMetadata(sample) {
-    // Make an API call to gather all data and then reduce to matching the sample selected
-    //TODO: 
-
+  d3.json("samples.json").then((data) => {
+    var metaData = data.metadata;
+    metaData.forEach(data =>{
+      if (data.id === sample){
+      var demoGraph = d3.select('#panel-body')
+      var currentSample = data.id
+      var ethni = data.ethnicity
+      var gender = data.gender
+      var age = data.age
+      var location = data.location
+      var buttontype = data.bbtype
+      var wfreq = data.wfreq
+      
+      var arrival = demoGraph.append("h5")
+      arrival.text("Ethnicity:${ethni}")
+      }
+     })
+  });
 };
 
 function init() {
@@ -43,13 +65,12 @@ function init() {
       // Loop through sampleNames to add "option" elements to the selector
       //TODO:
       
-      sampleNames.forEach(data => {
-        
+      sampleNames.forEach(name => {
+          var selections = selector.append("option");
+          selections.text(name);
       });
-
-
-    });
-  }
+    })
+};
   
   function optionChanged(newSample) {
     // Fetch new data each time a new sample is selected
